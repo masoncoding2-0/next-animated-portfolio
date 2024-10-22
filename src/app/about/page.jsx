@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Brain from "@/components/brain";
+import { motion, useInView, useScroll } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import { useRef } from "react";
 
 const skills = [
     { type: "language", title: "Python" },
@@ -90,13 +92,13 @@ const timelineData = [
     {
         title: "Software Engineer Ruby",
         date: "Sep. 2021 - Mar. 2022",
-        description:"Led the development of scalable web applications using Ruby on Rails for healthcare companies in the UK and Latin America, focusing on building secure and efficient systems for managing patient data, appointments, and clinical workflows. Designed and implemented RESTful APIs to enable seamless integration with third-party healthcare services and mobile applications, improving interoperability and accessibility of patient information across different platforms. Built desktop applications with Ruby, providing custom solutions for healthcare providers to manage patient records, billing systems, and inventory tracking, resulting in enhanced operational efficiency and accuracy. Ensured compliance with industry standards (such as HIPAA and GDPR) by implementing strong encryption, data masking, and access control mechanisms to safeguard sensitive medical and patient data.",
+        description: "Led the development of scalable web applications using Ruby on Rails for healthcare companies in the UK and Latin America, focusing on building secure and efficient systems for managing patient data, appointments, and clinical workflows. Designed and implemented RESTful APIs to enable seamless integration with third-party healthcare services and mobile applications, improving interoperability and accessibility of patient information across different platforms. Built desktop applications with Ruby, providing custom solutions for healthcare providers to manage patient records, billing systems, and inventory tracking, resulting in enhanced operational efficiency and accuracy. Ensured compliance with industry standards (such as HIPAA and GDPR) by implementing strong encryption, data masking, and access control mechanisms to safeguard sensitive medical and patient data.",
         company: "BairesDev",
     },
     {
         title: "JavaScript Developer",
         date: "2020-Current",
-        description:"Developed full-stack applications using MERN (MongoDB, Express.js, React, Node.js), MEVN (MongoDB, Express.js, Vue.js, Node.js), and MEAN (MongoDB, Express.js, Angular, Node.js) stacks to deliver scalable and maintainable web solutions for various client projects. Implemented server-side logic using Node.js and Express, focusing on building RESTful APIs that interact with MongoDB databases to manage data, ensuring optimized performance and scalability for real-time applications. Built responsive and dynamic front-end interfaces using React, Vue.js, and Angular frameworks, creating seamless user experiences across devices by leveraging advanced JavaScript techniques and component-based architectures. Architected and deployed modern web applications with Next.js, utilizing its features such as server-side rendering (SSR), static site generation (SSG), and API routes to enhance SEO performance and improve overall page load times. Integrated third-party services and APIs, including payment gateways, authentication providers (OAuth, JWT), and cloud-based storage (AWS S3, Firebase), streamlining external functionalities into core applications. Optimized application performance and security, implementing caching strategies (Redis, CDN), JWT-based authentication, and proper data validation to prevent vulnerabilities and ensure smooth user interactions. Collaborated with cross-functional teams, including UI/UX designers and backend developers, to define project requirements, deliver high-quality code, and troubleshoot complex issues during the software development lifecycle. Maintained and updated existing codebases for long-term projects, performing regular code refactoring, implementing new features, and resolving bugs to ensure stability and performance enhancements. Automated CI/CD pipelines using DevOps tools such as Jenkins, Docker, and GitLab CI, ensuring smooth deployment processes and minimal downtime during production releases.", 
+        description: "Developed full-stack applications using MERN (MongoDB, Express.js, React, Node.js), MEVN (MongoDB, Express.js, Vue.js, Node.js), and MEAN (MongoDB, Express.js, Angular, Node.js) stacks to deliver scalable and maintainable web solutions for various client projects. Implemented server-side logic using Node.js and Express, focusing on building RESTful APIs that interact with MongoDB databases to manage data, ensuring optimized performance and scalability for real-time applications. Built responsive and dynamic front-end interfaces using React, Vue.js, and Angular frameworks, creating seamless user experiences across devices by leveraging advanced JavaScript techniques and component-based architectures. Architected and deployed modern web applications with Next.js, utilizing its features such as server-side rendering (SSR), static site generation (SSG), and API routes to enhance SEO performance and improve overall page load times. Integrated third-party services and APIs, including payment gateways, authentication providers (OAuth, JWT), and cloud-based storage (AWS S3, Firebase), streamlining external functionalities into core applications. Optimized application performance and security, implementing caching strategies (Redis, CDN), JWT-based authentication, and proper data validation to prevent vulnerabilities and ensure smooth user interactions. Collaborated with cross-functional teams, including UI/UX designers and backend developers, to define project requirements, deliver high-quality code, and troubleshoot complex issues during the software development lifecycle. Maintained and updated existing codebases for long-term projects, performing regular code refactoring, implementing new features, and resolving bugs to ensure stability and performance enhancements. Automated CI/CD pipelines using DevOps tools such as Jenkins, Docker, and GitLab CI, ensuring smooth deployment processes and minimal downtime during production releases.",
         company: "MunayTech",
     },
     {
@@ -124,6 +126,17 @@ const AboutPage = () => {
 
     const filteredSkills = skills.filter(skill => skill.type === selectedTab);
 
+    const containerRef = useRef();
+
+    const { scrollYProgress } = useScroll({ container: containerRef });
+
+    const skillRef = useRef();
+    // const isSkillRefInView = useInView(skillRef, {once:true});
+    const isSkillRefInView = useInView(skillRef, { margin: "-100px" });
+
+    const experienceRef = useRef();
+    const isExperienceRefInView = useInView(experienceRef, { margin: "-100px" });
+
     return (
         <motion.div
             className="h-full"
@@ -132,11 +145,19 @@ const AboutPage = () => {
             transition={{ duration: 1 }}
         >
             {/* CONTAINER */}
-            <div className="">
+            <div className="h-full overflow-scroll lg:flex" ref={containerRef}>
                 {/* TEXT CONTAINER */}
-                <div className="p-4 sm:p-8 md:p-12 lg:p-20 xl:p-48 flex-col sm:gap-24 md:gap-32 lg:gap-48 xl:gap-64 lg:w-2/3 lg:p-0 xl:1/2">
+                <div className="p-4 sm:p-8 md:p-12 lg:p-20 xl:p-48 flex flex-col gap-24 md:gap-32 lg:gap-48 xl:gap-64 lg:w-2/3 lg:pr-0 xl:w-1/2">
                     {/* BIOGRAPHY CONTAINER */}
                     <div className="flex flex-col gap-12 justify-center">
+                        {/* BIOGRAPHY IMAGE */}
+                        <Image
+                            src="/me.jpg"
+                            alt=""
+                            width={112}
+                            height={112}
+                            className="w-28 h-28 rounded-full object-cover"
+                        />
                         {/* BIOGRAPHY TITLE */}
                         <h1 className="font-bold text-2xl"> BIOGRAPHY </h1>
                         {/* BIOGRAPHY DESC */}
@@ -161,12 +182,47 @@ const AboutPage = () => {
                             />
                         </div>
                     </div>
+                    {/* BIOGRAPHY SCROLL SVG */}
+                    <motion.svg
+                        initial={{ opacity: 0.2, y: 0 }}
+                        animate={{ opacity: 1, y: "10px" }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={50}
+                        height={50}
+                    >
+                        <path
+                            d="M5 15C5 16.8565 5.73754 18.6371 7.05029 19.9498C8.36305 21.2626 10.1435 21.9999 12 21.9999C13.8565 21.9999 15.637 21.2626 16.9498 19.9498C18.2625 18.6371 19 16.8565 19 15V9C19 7.14348 18.2625 5.36305 16.9498 4.05029C15.637 2.73754 13.8565 2 12 2C10.1435 2 8.36305 2.73754 7.05029 4.05029C5.73754 5.36305 5 7.14348 5 9V15Z"
+                            stroke="#000000"
+                            strokeWidth="1"
+                        ></path>
+                        <path d="M12 6V14" stroke="#000000" strokeWidth="1"></path>
+                        <path
+                            d="M15 11L12 14L9 11"
+                            stroke="#000000"
+                            strokeWidth="1"
+                        ></path>
+                    </motion.svg>
                     {/* SKILLS CONTAINER */}
-                    <div className="flex flex-col gap-12 justify-center">
+                    <div className="flex flex-col gap-12 justify-center" ref={skillRef}>
                         {/* SKILL TITLE */}
-                        <h1 className="font-bold text-2xl"> SKILLS </h1>
+                        <motion.h1
+                            initial={{ x: "-300px" }}
+                            animate={isSkillRefInView ? { x: 0 } : {}}
+                            transition={{ delay: 0.2 }}
+                            className="font-bold text-2xl"
+                        >
+                            SKILLS
+                        </motion.h1>
                         {/* SKILL LIST */}
-                        <div>
+                        <motion.div
+                            initial={{ x: "-900px" }}
+                            animate={isSkillRefInView ? { x: 0 } : {}}
+                            transition={{ delay: 0.6 }}
+                            className="flex gap-4 flex-wrap"
+                        >
                             <div className="border-b border-amber-200 dark:border-amber-700">
                                 <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
                                     {["language", "framework", "databases", "external", "rpa", "devops", "lowcode", "collaboration", "soft_skills"].map((tab) => (
@@ -190,14 +246,49 @@ const AboutPage = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
+                    {/* BIOGRAPHY SCROLL SVG */}
+                    <motion.svg
+                        initial={{ opacity: 0.2, y: 0 }}
+                        animate={{ opacity: 1, y: "10px" }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={50}
+                        height={50}
+                    >
+                        <path
+                            d="M5 15C5 16.8565 5.73754 18.6371 7.05029 19.9498C8.36305 21.2626 10.1435 21.9999 12 21.9999C13.8565 21.9999 15.637 21.2626 16.9498 19.9498C18.2625 18.6371 19 16.8565 19 15V9C19 7.14348 18.2625 5.36305 16.9498 4.05029C15.637 2.73754 13.8565 2 12 2C10.1435 2 8.36305 2.73754 7.05029 4.05029C5.73754 5.36305 5 7.14348 5 9V15Z"
+                            stroke="#000000"
+                            strokeWidth="1"
+                        ></path>
+                        <path d="M12 6V14" stroke="#000000" strokeWidth="1"></path>
+                        <path
+                            d="M15 11L12 14L9 11"
+                            stroke="#000000"
+                            strokeWidth="1"
+                        ></path>
+                    </motion.svg>
                     {/* EXPERIENCE CONTAINER */}
-                    <div className="flex flex-col gap-12 justify-center">
+                    <div className="flex flex-col gap-12 justify-center" ref={experienceRef}>
                         {/* EXPERIENCE TITLE */}
-                        <h1 className="font-bold text-2xl"> EXPERIENCE </h1>
+                        <motion.h1
+                            initial={{ x: "-300px" }}
+                            animate={isExperienceRefInView ? { x: "0" } : {}}
+                            transition={{ delay: 0.2 }}
+                            className="font-bold text-2xl"
+                        >
+                            EXPERIENCE
+                        </motion.h1>
                         {/* EXPERIENCE LIST */}
-                        <div>
+                        <motion.div
+                            initial={{ x: "-300px" }}
+                            animate={isExperienceRefInView ? { x: "0" } : {}}
+                            transition={{ delay: 0.6 }}
+                            className=""
+                        >
                             {/* EXPERIENCE LIST ITEM */}
 
                             <ol className="relative border-s border-amber-200 dark:border-amber-700">
@@ -229,13 +320,12 @@ const AboutPage = () => {
                                     </li>
                                 ))}
                             </ol>
-                        </div>
-
+                        </motion.div>
                     </div>
                 </div>
                 {/* SVG CONTAINER */}
-                <div className="hidden lg:block w-1/3 xl:1/2">
-                
+                <div className="hidden lg:block w-1/3 sticky top-0 xl:1/2">
+                    <Brain scrollYProgress={scrollYProgress} />
                 </div>
             </div>
         </motion.div>
